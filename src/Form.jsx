@@ -2,6 +2,8 @@ import React from "react";
 import "./Form.css";
 import "./Location";
 
+
+
 const Form = ({
   data,
   onChange,
@@ -12,6 +14,7 @@ const Form = ({
   formError,
   editId,
 }) => {
+  console.log('fomr');
   return (
     <>
       <h1>React Form Handling</h1>
