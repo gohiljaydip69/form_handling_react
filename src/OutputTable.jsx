@@ -1,16 +1,75 @@
-import React from "react";
+import React, {useContext} from "react";
 import "./Form.css";
 import { CiSquarePlus } from "react-icons/ci";
+import {StateContext}  from "./context/stateContext.jsx";
 
-const OutputTable = ({
-  dataArr,
-  onDelete,
-  onEdit,
-  selectedRows,
-  handleCheckedBox,
-  handleAllCheked,
-  handleDeleteAll
-}) => {
+
+const OutputTable = () => {
+
+    const {
+      data,
+      setData,
+      dataArr,
+      setDataArr,
+      selectedRows,
+      setSelectedRows,
+      setEditIndex,
+      
+      
+    } = useContext(StateContext);
+
+ // Handle Delete
+ const handleDelete = (id) => {
+  const delData = dataArr.filter((item) => item.id !== id);
+  setDataArr(delData);
+};
+
+// Handle Edit
+const handleEdit = (id) => {
+  const Index = dataArr.findIndex((item) => item.id === id);
+
+  setData({ ...dataArr[Index] });
+  setEditIndex(Index); // Set the index
+};
+
+//handle ChekedBox
+const handleCheckedBox = (id) => {
+  if (selectedRows.includes(id)) {
+    setSelectedRows(selectedRows.filter((item) => id !== item));
+  } else {
+    setSelectedRows([...selectedRows, id]);
+  }   
+};
+
+const handleAllCheked = () => {
+  if (selectedRows.length === dataArr.length) {
+    setSelectedRows([]);
+  } else {
+    const allSelectedIds = dataArr.map((item) => item.id);
+    setSelectedRows(allSelectedIds);
+  }
+};
+
+const handleDeleteAll = () => {
+  // if (selectedRows.length === dataArr.length) {
+  //   localStorage.removeItem("data");
+  //   setDataArr([]);
+  // } else {
+  //     const updatedData = dataArr.filter((item) => !selectedRows.includes(item.id));
+  //     console.log(updatedData)
+  //     setDataArr(updatedData);
+  //     setSelectedRows([]);
+  //   };
+    const updatedData = dataArr.filter((item) => !selectedRows.includes(item.id));
+    setDataArr(updatedData);
+    localStorage.setItem("data", JSON.stringify(updatedData)); 
+    setSelectedRows([]);
+  
+};
+
+
+
+
   return (
     <>
     <div className="Btn-Box">
@@ -65,7 +124,7 @@ const OutputTable = ({
               <td>{item.firstName}</td>
               <td>{item.lastName}</td>
               <td>{item.email}</td>
-              <td>{item.hobbies}</td>
+              <td>{item.hobbies.join(", ")}</td>
               <td>{item.gender}</td>
               <td>{item.country}</td>
               <td>{item.state}</td>
@@ -75,11 +134,11 @@ const OutputTable = ({
                   
                   <button 
                   disabled={!selectedRows.includes(item.id)}
-                  onClick={() => onEdit(item.id)}
+                  onClick={() => handleEdit(item.id)}
                   >Edit</button>
                   <button 
                   disabled={!selectedRows.includes(item.id)}
-                  onClick={() => onDelete(item.id)}
+                  onClick={() => handleDelete(item.id)}
                   >Delete</button>
                 </div>
               </td>
